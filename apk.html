@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perlch App</title>
+    <style>
+        body { margin: 0; background: #fff; color: #000; font-family: sans-serif; overflow-x: hidden; }
+        .bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .dot { position: absolute; width: 40px; height: 40px; background: #550; border-radius: 50%; opacity: 0.1; }
+        h1 { height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; text-align: center; font-size: 2.5rem; padding: 20px; box-sizing: border-box; }
+        .item { padding: 15px; margin: 10px; opacity: 0; transform: scale(0.5) translateY(50px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: bold; text-align: center; }
+        .item.show { opacity: 1; transform: scale(1) translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="bg" id="bg"></div>
+    <h1>THIS IS PERLCH' FIRST APK</h1>
+    <div id="grid"></div>
+    <script>
+        const grid = document.getElementById('grid');
+        const bg = document.getElementById('bg');
+        const phrases = ["this is my first apk!", "hello mobile!", "hello world!"];
+        
+        for(let i=0; i<150; i++) {
+            const d = document.createElement('div');
+            d.className = 'item';
+            d.innerText = phrases.filter(() => Math.random() > 0.5).join(' ') || phrases[0];
+            grid.appendChild(d);
+        }
+
+        const snakeCount = Math.floor(Math.random() * 5) + 3;
+        for(let s=0; s<snakeCount; s++) {
+            const offset = Math.random() * window.innerWidth;
+            const speed = 2 + Math.random() * 3;
+            const amp = 30 + Math.random() * 50;
+            const freq = 0.01 + Math.random() * 0.02;
+            for(let i=0; i<20; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                bg.appendChild(dot);
+                let y = window.innerHeight + (i * 50);
+                const move = () => {
+                    y -= speed;
+                    if (y < -50) y = window.innerHeight + 50;
+                    const x = offset + Math.sin(y * freq) * amp;
+                    dot.style.transform = `translate(${x}px, ${y}px)`;
+                    requestAnimationFrame(move);
+                };
+                move();
+            }
+        }
+
+        const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show') }), {threshold: 0.1});
+        document.querySelectorAll('.item').forEach(i => obs.observe(i));
+    </script>
+</body>
+</html>
